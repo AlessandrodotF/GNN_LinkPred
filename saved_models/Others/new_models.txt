@@ -1,0 +1,8 @@
+You can substitute the folder "Other" with a custom or existing scoring model different from the ComplEx one.
+Keep the same structure:
+
+Others/
+├──── Dataset1
+├──── Dataset2
+├──── Dataset3
+└──── Dataset4
