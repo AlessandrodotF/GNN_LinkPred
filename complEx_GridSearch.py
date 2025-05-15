@@ -11,7 +11,14 @@ from itertools import product
 from utils.multiclassNLL_class import MulticlassNLL
 from utils.regularizations_class import Regularization
 from utils.load_and_save import save_to_json
-from config.config import * 
+import argparse
+from config.config import Config
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=True, help="config_files/")
+args = parser.parse_args()
+cfg = Config(args.config)
+
 
 
 
@@ -79,7 +86,7 @@ def grid_search(PARAMS_GRID, B_SIZE,train_kg,val_kg):
                 trigger_times = 0  # reset if improve
             else:
                 trigger_times += 1
-                if trigger_times >= PATIENCE:
+                if trigger_times >= cfg.PATIENCE:
                     #print("Early stopping: loss not improved in {} epoches.".format(PATIENCE))
                     break
         
@@ -117,7 +124,7 @@ def grid_search_and_save_params(train_kg,val_kg):
 
 
     
-    best_params, best_mr, best_model_state_dict = grid_search(PARAMS_GRID,BATCH_SIZE,train_kg,val_kg)
+    best_params, best_mr, _ = grid_search(cfg.PARAMS_GRID,cfg.BATCH_SIZE,train_kg,val_kg)
     
     #printing and saving important info
     print("=" * 40)
@@ -127,14 +134,10 @@ def grid_search_and_save_params(train_kg,val_kg):
     print("-" * 40)
     print(f"Best Mean Rank (MR): {round(best_mr,2)}")
 
-    output_file = os.path.join(LOAD_DIR_MODEL, DATA_FILENAME[:-5]+"_best_params.json")
+    output_file = os.path.join(cfg.LOAD_DIR_MODEL, cfg.DATA_FILENAME[:-5]+"_best_params.json")
 
-    Dataset_utils.check_for_folder(LOAD_DIR_MODEL) 
+    Dataset_utils.check_for_folder(cfg.LOAD_DIR_MODEL) 
 
     save_to_json(output_file,best_params)
     print(f"Best params saved in : {output_file}")
     
-    #uncomment to save the weights of the best model found
-    #model_path = os.path.join(LOAD_DIR_MODEL, BEST_MODEL_FILENAME)
-    #torch.save(best_model_state_dict, model_path)
-    #print(f"Best models saved in: {model_path}")

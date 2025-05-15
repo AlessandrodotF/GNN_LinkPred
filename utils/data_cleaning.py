@@ -1,10 +1,12 @@
-from config.config import *
 import json
 from utils.load_and_save import save_to_json
-import utils.set_seeds_all 
+import argparse
+from config.config import Config
 
-#import utils.set_seeds_all as set_seeds_all 
-#set_seeds_all.set_seed(SEED)
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=True, help="config_files/")
+args = parser.parse_args()
+cfg = Config(args.config)
 
 def cleaning(data):
     """
@@ -219,6 +221,6 @@ def post_proc(DIR,output_file,temp_output_path):
 
     save_to_json(file_path_output,final_results)
     
-    print(f"File with generated triplets located in {DIR + DATA_FILENAME}\n")
+    print(f"File with generated triplets located in {DIR + cfg.DATA_FILENAME}\n")
 
  

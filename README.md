@@ -1,7 +1,7 @@
 ## Main algorithm flow
-**` Python 3.12.4 `**
+**` Python 3.11.11 `**
 
-This code tackles the task of **link prediction** using PyTorch Geometric and a scraped dataset saved as single list of dictionary.
+This code tackles the task of **link prediction** using PyTorch Geometric and a scraped dataset saved as single list of dictionary in .json format.
 - 0 Step: create the folder **`dataset`** and the corresponding subfolder with you dataset name.
 - First step:  check if the file  **`DATA_FILENAME = f"{DATASET_NAME}_FINAL_valid_triplets.json"`** exists, if it exists, skip to the SECOND STEP otherwise it will be _created_. In any case, the _FINAL_valid_triplets file  will contain a set of triplets in the format **HEAD** **REL** **TAIL** (for example: `["liliappleton","#IsRelated","mother"] `). Detail about the _creation_:
     -  DATA_CLEAN (graph_parallel_proj.py) parameters  determines whether preprocess is needed. The idea is to transform PROV_network-like text structure to obtain the same present in AAMD. The result of the preprocess is saved in "{DATASET_NAME}_clean.json". If DATA_CLEAN is True this step is skipped.
@@ -29,11 +29,9 @@ If you want to experiment with your own dataset:
 
 - If the file you start from is cleaned (like `AAMD_CLEAN.JSON`) use:  
     **`WORKING_DATASET_FILE = f"{DATASET_NAME}_clean.json"`**  
-    **`DATA_CLEAN = True`**  
   (_in this way no preprocess will happen_)  
   otherwise:  
     **`WORKING_DATASET_FILE = f"{DATASET_NAME}_no_clean.json"`**  
-    **`DATA_CLEAN = False`**  
   (_the preprocessing will generate the corresponding_  
    **`f"{DATASET_NAME}_clean.json"`** _in_ **`DIR = f"dataset/{DATASET_NAME}/"`**)
 

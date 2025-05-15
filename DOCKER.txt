@@ -1,0 +1,10 @@
+
+docker build -t final_image_gnn .           
+docker run --name final_version final_image_gnn PROV_network_test.yaml PROV_network_test_no_clean.json
+docker cp final_version:/dataset/PROV_network_test ./RESULTS
+
+
+TRA L ALTRO SE RIFAI LA RUN DEVI CAMBIARE IL PARAMETRO NEL CAMPO --NAME !!!
+
+docker run --name final_version2 final_image_gnn PROV_network_test.yaml PROV_network_test_no_clean.json
+docker cp final_version2:/dataset/PROV_network_test ./RESULTS

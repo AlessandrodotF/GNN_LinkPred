@@ -1,14 +1,13 @@
 
 import logging
 import numpy as np
-from config.config import *
 import networkx as nx
 import pandas as pd
 from utils.dataset_utils import filter_unseen_entities
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 from torchkge.data_structures import KnowledgeGraph
-from torchkge.evaluation import LinkPredictionEvaluator,TripletClassificationEvaluator
+from torchkge.evaluation import LinkPredictionEvaluator
 import torch
 import set_seeds_all
 

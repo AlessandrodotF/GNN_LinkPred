@@ -7,6 +7,13 @@ from utils.data_cleaning import cleaning
 from utils.graphs_utils import build_atomic_graphs, compress_graph_nx, build_graph_n_steps, build_graph_networkx
 from utils.load_and_save import load_from_json
 from utils.pre_preprocessing import perform_preprocessing
+import argparse
+from config.config import Config
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=True, help="config_files/")
+args = parser.parse_args()
+cfg = Config(args.config)
 
 
 
@@ -33,7 +40,7 @@ def process_key(args):
         selected_key,
         _shared_uuid_taxonomy_obj_dict
     )
-    comp = compress_graph_nx(step_n, TAXONOMY_OF_INTEREST)
+    comp = compress_graph_nx(step_n, cfg.TAXONOMY_OF_INTEREST)
     edges = [[min(u,v), info['label'], max(u,v)] for u, v, info in comp.edges(data=True)]
     return edges
 
@@ -45,7 +52,7 @@ def process_and_save_batch(task_list, batch_size, pool, output_path):
     batch_results = set()
     with open(output_path, 'a', encoding='utf-8') as fout:
         
-        for i, result in enumerate(pool.imap(process_key, task_list, chunksize=int(BATCH_SIZE_PARALLEL*0.1))):
+        for i, result in enumerate(pool.imap(process_key, task_list, chunksize=int(cfg.BATCH_SIZE_PARALLEL*0.1))):
             
             batch_results.update(tuple(x) for x in result)
             
@@ -60,17 +67,17 @@ def process_and_save_batch(task_list, batch_size, pool, output_path):
 
 
 def from_texts_to_triplets():
-    print(f"Creation of the graphs and triplets for {DATASET_NAME}\n")
+    print(f"Creation of the graphs and triplets for {cfg.DATASET_NAME}\n")
 
     # load or preprocess
-    if "_no_clean.json" in  WORKING_DATASET_FILE:
+    if "_no_clean.json" in  cfg.WORKING_DATASET_FILE:
         print("Data cleaning needed","\n")
         perform_preprocessing()#create a dataset with the same structure of AAMD and save results with _clean suffix
-        data = load_from_json(DIR + DATASET_NAME + '_clean.json')
+        data = load_from_json(cfg.DIR + cfg.DATASET_NAME + '_clean.json')
     else:
         print("Data cleaning NOT needed","\n")
 
-        data = load_from_json(DIR + WORKING_DATASET_FILE) #your data have the same structure of AAMD e the corresponding file already have _clean suffix
+        data = load_from_json(cfg.DIR + cfg.WORKING_DATASET_FILE) #your data have the same structure of AAMD e the corresponding file already have _clean suffix
 
 
 
@@ -90,7 +97,7 @@ def from_texts_to_triplets():
     ]
 
     # path  output JSONL: remove if it exists (dengerous overwrite stuff), need to store non post processed results
-    temp_output_path = DIR + 'triplets_temp.jsonl'
+    temp_output_path = cfg.DIR + 'triplets_temp.jsonl'
     if os.path.exists(temp_output_path):
         os.remove(temp_output_path)
 
@@ -101,7 +108,7 @@ def from_texts_to_triplets():
         initializer=init_worker,
         initargs=(dict_graph_src, dict_graph_dest, uuid_taxonomy_obj_dict)
     ) as pool:
-        process_and_save_batch(task_list, BATCH_SIZE_PARALLEL, pool, temp_output_path)
+        process_and_save_batch(task_list, cfg.BATCH_SIZE_PARALLEL, pool, temp_output_path)
     T2 = time.time()
 
 

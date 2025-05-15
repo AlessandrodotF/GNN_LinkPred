@@ -2,7 +2,7 @@ import pandas as pd
 import random
 from utils.dataset_utils import load_pd_from_json
 from utils.load_and_save import save_to_json
-from config.config import *
+
 
 
 def swapping_tail(a_head,b_tail):

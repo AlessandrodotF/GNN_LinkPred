@@ -8,7 +8,13 @@ from torchkge.models import ComplExModel
 from torchkge.utils import MarginLoss, DataLoader
 from utils.multiclassNLL_class import MulticlassNLL
 from utils.regularizations_class import Regularization
-from config.config import *
+import argparse
+from config.config import Config
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=True, help="config_files/")
+args = parser.parse_args()
+cfg = Config(args.config)
+
 
 
 
@@ -22,7 +28,7 @@ def full_training(train_kg,params_GS):
 
     optimizer = Adam(model.parameters(), lr=params_GS["LR"])
     sampler = UniformNegativeSampler(train_kg)
-    dataloader = DataLoader(train_kg, batch_size=BATCH_SIZE)
+    dataloader = DataLoader(train_kg, batch_size=cfg.BATCH_SIZE)
 
     #if cuda.is_available():
     #    cuda.empty_cache()
@@ -32,7 +38,7 @@ def full_training(train_kg,params_GS):
     trigger_times = 0
     best_loss = float('inf')
 
-    for epoch in range(1, N_EPOCHS+1):  
+    for epoch in range(1, cfg.N_EPOCHS+1):  
         model.train()
         running_loss = 0.0
         for i, batch in enumerate(dataloader):
@@ -60,13 +66,13 @@ def full_training(train_kg,params_GS):
             trigger_times = 0  
         else:
             trigger_times += 1
-            if trigger_times >= PATIENCE:
-                print("Early stopping: la loss non migliora da {} epoche.".format(PATIENCE))
+            if trigger_times >= cfg.PATIENCE:
+                print("Early stopping: la loss non migliora da {} epoche.".format(cfg.PATIENCE))
                 break
 
 
     model.normalize_parameters()
-    model_path = os.path.join(LOAD_DIR_MODEL, MODEL_FILENAME)
+    model_path = os.path.join(cfg.LOAD_DIR_MODEL, cfg.MODEL_FILENAME)
     torch.save(model.state_dict(), model_path)
     print(f"Model saved in: {model_path}")
 

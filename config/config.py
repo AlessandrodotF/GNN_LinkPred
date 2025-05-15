@@ -1,49 +1,41 @@
-SEED=0
+
+import yaml
+
+class Config:
+    def __init__(self, yaml_path):
+        with open(yaml_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        # Attributi principali
+        self.SEED = cfg.get("SEED", 0)
+        self.DATASET_NAME = cfg["DATASET_NAME"]
+        self.WORKING_DATASET_FILE = cfg["WORKING_DATASET_FILE"]
+
+        self.BATCH_SIZE_PARALLEL = cfg["BATCH_SIZE_PARALLEL"]
+        self.TAXONOMY_OF_INTEREST = cfg["TAXONOMY_OF_INTEREST"]
+
+        # Percorsi derivati
+        self.DIR = f"dataset/{self.DATASET_NAME}/"
+        self.DATA_FILENAME = f"{self.DATASET_NAME}_FINAL_valid_triplets.json"
+        self.UNSEEN_TRIPLES = f"UNSEEN_{self.DATA_FILENAME}"
+        self.SAVE_TRIPLETS_SCORES = "statements_and_metrics_" + self.UNSEEN_TRIPLES[:-5] + ".csv"
 
 
-DATASET_NAME = "PROV_network_test" #name of the folder containing data .json file
-WORKING_DATASET_FILE= f"{DATASET_NAME}_clean.json" #!!!!! #USE {...}_clean.json if it has been preprocessed OTHERWISE {...}_no_clean.json
+        self.LOAD_DIR_MODEL = f"saved_models/ComplEx/{self.DATASET_NAME}/"
+        self.BEST_MODEL_FOUND = "ComplEx_Best_GridSearch_" + self.DATA_FILENAME[:-5] + ".pth"
+        self.MODEL_FILENAME = "ComplEx_main_model_" + self.DATA_FILENAME[:-5] + ".pth"
 
-BATCH_SIZE_PARALLEL = 100 # parallel execution for the triplets creation 
-TAXONOMY_OF_INTEREST = ["#Person"]#keep the list format
+        # Altri parametri
+        self.ADD_RECIPROCAL_RELS = cfg["ADD_RECIPROCAL_RELS"]
+        self.TEST_SIZE = cfg["TEST_SIZE"]
+        self.VAL_SIZE = cfg["VAL_SIZE"]
 
-###################################################################################################
-################################   DO NOT CHANGE   ################################################
-DIR = f"dataset/{DATASET_NAME}/"
-LOAD_DIR_MODEL = f"Saved_Models/ComplEx/{DATASET_NAME}/"
-DATA_FILENAME=f"{DATASET_NAME}_FINAL_valid_triplets.json"
-UNSEEN_TRIPLES = f"UNSEEN_{DATA_FILENAME}"
-SAVE_TRIPLETS_SCORES = "statements_and_metrics_"+UNSEEN_TRIPLES[:-5]+".csv"
-BEST_MODEL_FILENAME = "ComplEx_Best_GridSearch_"+DATA_FILENAME[:-5]+".pth"#save GS weights
-MODEL_FILENAME = "ComplEx_main_model_"+DATA_FILENAME[:-5]+".pth"#save weights after training phase
-###################################################################################################
+        self.PARAMS_GRID = cfg["PARAMS_GRID"]
+        self.PATIENCE = cfg["PATIENCE"]
+        self.N_EPOCHS = cfg["N_EPOCHS"]
+        self.BATCH_SIZE = cfg["BATCH_SIZE"]
 
-
-#dataset parameters
-ADD_RECIPROCAL_RELS = True
-TEST_SIZE = 0.1# % of split respect to the full length of triplets file 
-VAL_SIZE  = 0.1#  (they take in account the add_reciproc param) 
-
-#select best model - GridSearch
-PARAMS_GRID = {
-     "EMB_DIM": [100],
-     "LR": [1e-3],
-     "ETA": [30],
-     "N_EPOCHS": [25],
-     "REG_TYPE": ["LP"],
-     "P": [3],
-     "REG_CONST": [1e-4,]}
-
-#specific parameters for the training phase, 
-#the others are loaded from GS results
-PATIENCE=10 # (early stopping)
-N_EPOCHS = 30
-BATCH_SIZE = 500 #for train,val,test,inference and GS phase
-
-
-
-#discovery.py NOT EXPERIMENTED at the moment
-TOP_N=1
-MAX_CANDIDATES=20000
-STRATEGY='entity_frequency'
-TARGET_REL='bought_from' 
+        self.TOP_N = cfg["TOP_N"]
+        self.MAX_CANDIDATES = cfg["MAX_CANDIDATES"]
+        self.strSTRATEGYategy = cfg["STRATEGY"]
+        self.TARGET_REL = cfg["TARGET_REL"]

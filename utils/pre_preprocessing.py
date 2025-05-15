@@ -1,7 +1,11 @@
-import json
-from config.config import *
 from utils.load_and_save import load_from_json,save_to_json
+import argparse
+from config.config import Config
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=True, help="config_files/")
+args = parser.parse_args()
+cfg = Config(args.config)
 
 """
 This script was created to process the PROV_network dataset, which had a different structure compared to AAMD.
@@ -115,7 +119,7 @@ def create_relation(data):
 
 def perform_preprocessing():
     
-    input_path = DIR+WORKING_DATASET_FILE
+    input_path = cfg.DIR+cfg.WORKING_DATASET_FILE
     data = load_from_json(input_path)
     
     nodes = create_node(data) #list of dict with ONLY nodes
@@ -125,5 +129,5 @@ def perform_preprocessing():
     # in the original AAMD dataset structure, both nodes and rels are present and concatenated in a single list of dictionaries
     final_dataset = nodes+rels
 
-    save_path =  DIR+DATASET_NAME+"_clean.json"
+    save_path =  cfg.DIR+cfg.DATASET_NAME+"_clean.json"
     save_to_json(save_path,final_dataset)

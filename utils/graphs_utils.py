@@ -1,4 +1,4 @@
-from config.config import *
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import textwrap

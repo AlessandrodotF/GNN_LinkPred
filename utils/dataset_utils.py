@@ -2,9 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 from torchkge.data_structures import KnowledgeGraph
-from config.config import *
-
-import os
 
 
 
