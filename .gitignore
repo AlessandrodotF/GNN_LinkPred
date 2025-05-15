@@ -1,4 +1,4 @@
 # Ignora file/catelle di cache di Python
 *.pyc
 __pycache__/
-
+dataset
